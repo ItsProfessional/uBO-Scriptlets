@@ -116,14 +116,29 @@ function setAttribute(selector, attribute, value, when) {
 /// inject-style.js
 /// alias is.js
 /// world isolated
+/// dependency safe-self.fn
 function injectStyle(css)
 {
-    const head = document.querySelector('head');
-    if (!head) { return; }
+    if(css == undefined) return;
 
-    let style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = css;
+    const fn = () => {
+        const head = document.querySelector('head');
+        if (!head) { return; }
 
-    head.appendChild(style);
+        let style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = css;
+
+        head.appendChild(style);
+    }
+
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        setTimeout(fn, 1);
+    } else {
+        const safe = safeSelf();
+        safe.addEventListener.apply(document, [ 'DOMContentLoaded', () => {
+            fn();
+            safe.removeEventListener.apply(document, args);
+        }, { capture: true } ])
+    }
 }
