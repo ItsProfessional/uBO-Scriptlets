@@ -15,9 +15,7 @@
 /// alias rh.js
 /// world isolated
 /// dependency safe-self.fn
-// example.com##+js(rh, hostname)
 function redirectHostname(hostname) {
-    "use strict";
     if (hostname === undefined) {
         return;
     }
@@ -41,12 +39,14 @@ function redirectHostname(hostname) {
         }
     }
     window.location.replace(targetOrigin
-                            + window.location.pathname
-                            + window.location.search
-                            + window.location.hash);
+        + window.location.pathname
+        + window.location.search
+        + window.location.hash
+    );
 }
 
 // https://github.com/tastytypist/scriptlets/blob/e2a5f49eb52edd164ffbcc1c14f65b2057f8874e/scriptlets.js#L126-L171
+// The built-in set-attr has restrictions on the values you can set, while this doesn't.
 /**
  * Sets the specified attribute-value pair on the specified node at the
  * specified document loading state.
@@ -61,9 +61,7 @@ function redirectHostname(hostname) {
 /// alias sa.js
 /// world isolated
 /// dependency run-at.fn
-// example.com##+js(sa, [selector], attribute, value, when)
 function setAttribute(selector, attribute, value, when) {
-    "use strict";
     if (selector === undefined || attribute === undefined) {
         return;
     }
@@ -107,4 +105,25 @@ function setAttribute(selector, attribute, value, when) {
             subtree: true, childList: true, attributeFilter: [attribute]
         });
     }, when);
+}
+
+/**
+ * Inject a stylesheet into the page
+ * @example
+ * www.reddit.com##+js(is, '* { display: none; }')
+ * @param {string} css - The innerHTML of the style tag to be injected.
+ * */
+/// inject-style.js
+/// alias is.js
+/// world isolated
+function injectStyle(css)
+{
+    const head = document.querySelector('head');
+    if (!head) { return; }
+
+    let style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = css;
+
+    head.appendChild(style);
 }
