@@ -106,39 +106,3 @@ function setAttribute(selector, attribute, value, when) {
         });
     }, when);
 }
-
-/**
- * Inject a stylesheet into the page
- * @example
- * www.reddit.com##+js(is, '* { display: none; }')
- * @param {string} css - The innerHTML of the style tag to be injected.
- * */
-/// inject-style.js
-/// alias is.js
-/// world isolated
-/// dependency safe-self.fn
-function injectStyle(css)
-{
-    if(css == undefined) return;
-
-    const fn = () => {
-        const head = document.querySelector('head');
-        if (!head) { return; }
-
-        let style = document.createElement('style');
-        style.type = 'text/css';
-        style.innerHTML = css;
-
-        head.appendChild(style);
-    }
-
-    if (document.readyState === "complete" || document.readyState === "interactive") {
-        setTimeout(fn, 1);
-    } else {
-        const safe = safeSelf();
-        safe.addEventListener.apply(document, [ 'DOMContentLoaded', () => {
-            fn();
-            safe.removeEventListener.apply(document, args);
-        }, { capture: true } ])
-    }
-}
